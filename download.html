@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快速下载中心</title>
+    <!-- 引入Font Awesome图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* 重置默认样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        /* 页面背景渐变动画 */
+        body {
+            min-height: 100vh;
+            background: linear-gradient(45deg, #2193b0, #6dd5ed);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* 背景动画关键帧 */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 主容器样式 */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: containerFadeIn 1s ease-out;
+        }
+
+        /* 容器淡入动画 */
+        @keyframes containerFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 用户信息栏 */
+        .user-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-info .guest-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+
+        .logout-btn {
+            margin-left: 15px;
+            padding: 5px 15px;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+        }
+
+        /* 标题样式 */
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            position: relative;
+            padding-bottom: 15px;
+            animation: titleSlideIn 1s ease-out;
+        }
+
+        /* 标题滑入动画 */
+        @keyframes titleSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(45deg, #2193b0, #6dd5ed);
+            border-radius: 3px;
+        }
+
+        /* 下载卡片网格布局 */
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+            animation: cardsAppear 1s ease-out;
+        }
+
+        /* 卡片出现动画 */
+        @keyframes cardsAppear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 下载卡片样式 */
+        .download-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: cardPop 0.5s ease-out backwards;
+        }
+
+        /* 卡片弹出动画 */
+        @keyframes cardPop {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .download-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 卡片标题 */
+        .download-card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        /* 下载信息样式 */
+        .download-info {
+            margin: 20px 0;
+            color: #666;
+        }
+
+        .download-info p {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .download-info p:hover {
+            transform: translateX(5px);
+        }
+
+        .download-info i {
+            color: #2193b0;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* 下载按钮样式 */
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            background: linear-gradient(45deg, #2193b0, #6dd5ed);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%) rotate(45deg);
+            transition: transform 0.5s ease;
+        }
+
+        .download-btn:hover::after {
+            transform: translate(-50%, -50%) rotate(45deg) scale(1.5);
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 147, 176, 0.3);
+        }
+
+        .download-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* 进度条容器 */
+        .progress-container {
+            width: 100%;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+            display: none;
+            animation: progressAppear 0.3s ease-out;
+        }
+
+        /* 进度条出现动画 */
+        @keyframes progressAppear {
+            from {
+                opacity: 0;
+                transform: scaleX(0);
+            }
+            to {
+                opacity: 1;
+                transform: scaleX(1);
+            }
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            width: 0%;
+            height: 8px;
+            background: linear-gradient(45deg, #2193b0, #6dd5ed);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.4),
+                transparent
+            );
+            animation: progressShine 1.5s infinite;
+        }
+
+        /* 进度条光效动画 */
+        @keyframes progressShine {
+            from {
+                transform: translateX(-100%);
+            }
+            to {
+                transform: translateX(100%);
+            }
+        }
+
+        /* 标签样式 */
+        .tag {
+            position: absolute;
+            top: 20px;
+            right: -35px;
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 40px;
+            transform: rotate(45deg);
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            animation: tagWave 2s ease-in-out infinite;
+        }
+
+        /* 标签波动动画 */
+        @keyframes tagWave {
+            0%, 100% {
+                transform: rotate(45deg) scale(1);
+            }
+            50% {
+                transform: rotate(45deg) scale(1.05);
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .download-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .download-btn {
+                padding: 12px 25px;
+                font-size: 16px;
+            }
+
+            .user-bar {
+                flex-direction: column;
+                gap: 10px;
+                border-radius: 15px;
+            }
+        }
+
+        /* 用户信息弹窗样式 */
+        .user-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            animation: modalPop 0.3s ease-out;
+        }
+
+        @keyframes modalPop {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5em;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: #ff6b6b;
+        }
+
+        .modal-avatar {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .modal-avatar img,
+        .modal-avatar i {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid #23a6d5;
+            object-fit: cover;
+        }
+
+        .modal-avatar i {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            color: #23a6d5;
+            background: #f5f5f5;
+        }
+
+        .modal-avatar::after {
+            content: '点击更换头像';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 8px 0;
+            background: rgba(35, 166, 213, 0.8);
+            color: white;
+            font-size: 12px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border-radius: 0 0 30px 30px;
+        }
+
+        .modal-avatar:hover::after {
+            opacity: 1;
+        }
+
+        .modal-form {
+            margin-top: 20px;
+        }
+
+        .modal-form .form-group {
+            margin-bottom: 15px;
+        }
+
+        .modal-form label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .modal-form input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .modal-form input:focus {
+            border-color: #23a6d5;
+            outline: none;
+        }
+
+        .modal-form .error-message {
+            color: #ff6b6b;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-btn-save {
+            background: linear-gradient(45deg, #23a6d5, #23d5ab);
+            color: white;
+        }
+
+        .modal-btn-cancel {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 添加时间显示样式 */
+        .time-display {
+            background: linear-gradient(45deg, #2193b0, #6dd5ed);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-right: 15px;
+            box-shadow: 0 2px 8px rgba(33, 147, 176, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .time-display i {
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 用户信息栏 -->
+        <div class="user-bar">
+            <div class="time-display">
+                <i class="far fa-clock"></i>
+                <span id="currentTime"></span>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <span id="username">游客</span>
+                <button class="logout-btn" onclick="handleLogout()">
+                    <i class="fas fa-sign-out-alt"></i> 退出
+                </button>
+            </div>
+        </div>
+
+        <h1>快速下载中心</h1>
+        
+        <div class="download-grid">
+            <!-- 专业版下载卡片 -->
+            <div class="download-card" style="animation-delay: 0.1s">
+                <div class="tag">推荐</div>
+                <h2>加速器 Pro版本</h2>
+                <div class="download-info">
+                    <p><i class="fas fa-rocket"></i> 无限速下载，支持多线程</p>
+                    <p><i class="fas fa-file-archive"></i> 文件大小：58.5 MB</p>
+                    <p><i class="fas fa-clock"></i> 更新时间：2024-01-15</p>
+                    <p><i class="fas fa-download"></i> 下载次数：12,458</p>
+                </div>
+                <div class="progress-container" id="progress1">
+                    <div class="progress-bar"></div>
+                </div>
+                <button class="download-btn" onclick="startDownload(1)">
+                    <i class="fas fa-download"></i>&nbsp; 立即下载
+                </button>
+            </div>
+
+            <!-- 免费版下载卡片 -->
+            <div class="download-card" style="animation-delay: 0.2s">
+                <h2>加速器 免费版</h2>
+                <div class="download-info">
+                    <p><i class="fas fa-tachometer-alt"></i> 基础加速功能</p>
+                    <p><i class="fas fa-file-archive"></i> 文件大小：45.2 MB</p>
+                    <p><i class="fas fa-clock"></i> 更新时间：2024-01-14</p>
+                    <p><i class="fas fa-download"></i> 下载次数：45,127</p>
+                </div>
+                <div class="progress-container" id="progress2">
+                    <div class="progress-bar"></div>
+                </div>
+                <button class="download-btn" onclick="startDownload(2)">
+                    <i class="fas fa-download"></i>&nbsp; 立即下载
+                </button>
+            </div>
+
+            <!-- 手机版下载卡片 -->
+            <div class="download-card" style="animation-delay: 0.3s">
+                <h2>加速器 手机版</h2>
+                <div class="download-info">
+                    <p><i class="fas fa-mobile-alt"></i> 移动设备专用</p>
+                    <p><i class="fas fa-file-archive"></i> 文件大小：32.8 MB</p>
+                    <p><i class="fas fa-clock"></i> 更新时间：2024-01-13</p>
+                    <p><i class="fas fa-download"></i> 下载次数：28,936</p>
+                </div>
+                <div class="progress-container" id="progress3">
+                    <div class="progress-bar"></div>
+                </div>
+                <button class="download-btn" onclick="startDownload(3)">
+                    <i class="fas fa-download"></i>&nbsp; 立即下载
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="user-modal" id="userModal">
+        <div class="modal-content">
+            <i class="fas fa-times modal-close" onclick="closeUserModal()"></i>
+            <div class="modal-avatar" onclick="document.getElementById('newAvatarInput').click()">
+                <i class="fas fa-user"></i>
+            </div>
+            <input type="file" id="newAvatarInput" style="display: none;" accept="image/*">
+            <form class="modal-form" onsubmit="return handlePasswordChange(event)">
+                <div class="form-group">
+                    <label>当前密码</label>
+                    <input type="password" id="currentPassword" required>
+                    <div class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <label>新密码</label>
+                    <input type="password" id="newPassword" required>
+                    <div class="error-message"></div>
+                </div>
+                <div class="form-group">
+                    <label>确认新密码</label>
+                    <input type="password" id="confirmPassword" required>
+                    <div class="error-message"></div>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="modal-btn modal-btn-cancel" onclick="closeUserModal()">取消</button>
+                    <button type="submit" class="modal-btn modal-btn-save">保存更改</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 检查登录状态
+        function checkLoginStatus() {
+            const username = localStorage.getItem('username');
+            const isGuest = localStorage.getItem('isGuest') === 'true';
+            const userAvatar = localStorage.getItem('userAvatar');
+            
+            if (!username) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // 更新用户信息显示
+            document.getElementById('username').textContent = username;
+            
+            // 更新头像显示
+            const avatarContainer = document.querySelector('.user-avatar');
+            if (isGuest) {
+                // 游客模式显示默认头像
+                avatarContainer.innerHTML = '<i class="fas fa-user-secret"></i>';
+                avatarContainer.style.cursor = 'default';
+                // 添加游客标签
+                const guestBadge = document.createElement('span');
+                guestBadge.className = 'guest-badge';
+                guestBadge.textContent = '游客模式';
+                document.getElementById('username').after(guestBadge);
+            } else if (userAvatar) {
+                // 显示用户上传的头像
+                avatarContainer.innerHTML = `<img src="${userAvatar}" alt="用户头像">`;
+                avatarContainer.style.cursor = 'pointer';
+                avatarContainer.title = '点击修改个人信息';
+            } else {
+                // 显示默认头像
+                avatarContainer.innerHTML = '<i class="fas fa-user"></i>';
+                avatarContainer.style.cursor = 'pointer';
+                avatarContainer.title = '点击修改个人信息';
+            }
+        }
+
+        // 处理退出登录
+        function handleLogout() {
+            localStorage.removeItem('username');
+            window.location.href = 'login.html';
+        }
+
+        // 修改下载函数
+        function startDownload(id) {
+            // 检查登录状态
+            if (!localStorage.getItem('username')) {
+                alert('请先登录！');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // 根据不同版本设置下载链接和文件名
+            let downloadInfo = {
+                url: '',
+                filename: ''
+            };
+
+            switch(id) {
+                case 1:
+                    downloadInfo = {
+                        url: './youyo/software/AKInstall.2.0.3.32.exe',  // 专业版软件路径
+                        filename: '加速器专业版.exe'
+                    };
+                    break;
+                case 2:
+                    downloadInfo = {
+                        url: './youyo/software/XunYou8.0.exe',  // 免费版软件路径
+                        filename: '加速器免费版.exe'
+                    };
+                    break;
+                case 3:
+                    downloadInfo = {
+                        url: './youyo/software/accelerator-mobile.apk',  // 手机版软件路径
+                        filename: '加速器手机版.apk'
+                    };
+                    break;
+            }
+
+            // 创建下载链接并触发下载
+            const link = document.createElement('a');
+            link.href = downloadInfo.url;
+            link.download = downloadInfo.filename;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // 显示下载开始提示
+            const downloadBtn = document.querySelector(`#progress${id}`).nextElementSibling;
+            downloadBtn.innerHTML = '<i class="fas fa-check"></i>&nbsp; 下载已开始';
+            setTimeout(() => {
+                downloadBtn.innerHTML = '<i class="fas fa-download"></i>&nbsp; 立即下载';
+            }, 2000);
+        }
+
+        // 页面加载时检查登录状态
+        window.addEventListener('load', checkLoginStatus);
+
+        // 添加新的函数
+        // 处理头像点击事件
+        document.querySelector('.user-avatar').addEventListener('click', function() {
+            const isGuest = localStorage.getItem('isGuest') === 'true';
+            if (!isGuest) {
+                openUserModal();
+            }
+        });
+
+        // 打开用户信息模态框
+        function openUserModal() {
+            const modal = document.getElementById('userModal');
+            const modalAvatar = modal.querySelector('.modal-avatar');
+            const userAvatar = localStorage.getItem('userAvatar');
+            
+            if (userAvatar) {
+                modalAvatar.innerHTML = `<img src="${userAvatar}" alt="用户头像">`;
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        // 关闭用户信息模态框
+        function closeUserModal() {
+            document.getElementById('userModal').style.display = 'none';
+            document.querySelector('.modal-form').reset();
+            document.querySelectorAll('.error-message').forEach(msg => msg.style.display = 'none');
+        }
+
+        // 处理新头像上传
+        document.getElementById('newAvatarInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) { // 5MB限制
+                    alert('图片大小不能超过5MB');
+                    this.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const modalAvatar = document.querySelector('.modal-avatar');
+                    modalAvatar.innerHTML = `<img src="${e.target.result}" alt="新头像">`;
+                    localStorage.setItem('userAvatar', e.target.result);
+                    
+                    // 更新主页面的头像
+                    const mainAvatar = document.querySelector('.user-avatar');
+                    mainAvatar.innerHTML = `<img src="${e.target.result}" alt="用户头像">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 处理密码修改
+        function handlePasswordChange(event) {
+            event.preventDefault();
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // 重置错误提示
+            document.querySelectorAll('.error-message').forEach(msg => msg.style.display = 'none');
+            
+            // 验证密码
+            if (newPassword.length < 6 || newPassword.length > 20) {
+                showModalError('newPassword', '新密码长度需在6-20个字符之间');
+                return false;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showModalError('confirmPassword', '两次输入的密码不一致');
+                return false;
+            }
+            
+            // 这里应该调用后端API进行密码验证和更新
+            // 现在只是模拟成功
+            alert('密码修改成功！');
+            closeUserModal();
+            return false;
+        }
+
+        // 显示模态框错误信息
+        function showModalError(inputId, message) {
+            const errorElement = document.getElementById(inputId).nextElementSibling;
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        // 更新时间显示
+        function updateTime() {
+            const now = new Date();
+            const options = {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            };
+            document.getElementById('currentTime').textContent = now.toLocaleString('zh-CN', options);
+        }
+
+        // 每秒更新一次时间
+        setInterval(updateTime, 1000);
+        // 页面加载时立即显示时间
+        updateTime();
+    </script>
+</body>
+</html> 
