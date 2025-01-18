@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>奇游加速器 - 专业的游戏网络加速工具</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* 重置默认样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+
+        /* 全局样式 */
+        body {
+            line-height: 1.6;
+            color: #fff;
+            background: #000;
+            overflow-x: hidden;
+        }
+
+        /* 导航栏样式 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            width: 200px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #00a8ff, #0097e6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0, 168, 255, 0.3);
+        }
+
+        .logo-icon i {
+            font-size: 24px;
+            color: #fff;
+        }
+
+        .logo span {
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 16px;
+            transition: color 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover {
+            color: #00a8ff;
+        }
+
+        .main-tag {
+            background: #00a8ff;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+
+        .download-btn {
+            background: linear-gradient(45deg, #00a8ff, #0097e6);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            box-shadow: 0 0 20px rgba(0, 168, 255, 0.3);
+            margin-left: auto;
+            width: 200px;
+            text-align: center;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 168, 255, 0.5);
+        }
+
+        /* 英雄区域样式 */
+        .hero {
+            padding: 150px 50px 100px;
+            background: radial-gradient(circle at center, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.9) 100%), url('game-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 添加星光效果 */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(circle at center, #00a8ff 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.1;
+            animation: twinkle 3s infinite alternate;
+        }
+
+        @keyframes twinkle {
+            from { opacity: 0.05; }
+            to { opacity: 0.15; }
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(0, 168, 255, 0.5);
+        }
+
+        .hero p {
+            font-size: 24px;
+            color: #00a8ff;
+            margin-bottom: 40px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 168, 255, 0.5);
+        }
+
+        .win-download-btn {
+            background: linear-gradient(45deg, #00a8ff, #0097e6);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            box-shadow: 0 0 20px rgba(0, 168, 255, 0.3);
+            transition: all 0.3s;
+        }
+
+        .win-download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 168, 255, 0.5);
+        }
+
+        .win-download-btn i {
+            font-size: 24px;
+        }
+
+        /* 平台支持区域 */
+        .platforms {
+            padding: 50px;
+            text-align: center;
+            background: #111;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 添加光晕效果 */
+        .platforms::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(0, 168, 255, 0.1) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .platform-grid {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .platform-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .platform-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .platform-item i {
+            font-size: 32px;
+            color: #00a8ff;
+            transition: all 0.3s;
+        }
+
+        .platform-item:hover i {
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 168, 255, 0.8);
+        }
+
+        .platform-item span {
+            color: #999;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .platform-item:hover span {
+            color: #00a8ff;
+        }
+
+        /* 游戏背景效果 */
+        .game-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .game-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(5px);
+        }
+
+        /* 添加蓝色光效 */
+        .blue-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle at center, rgba(0, 168, 255, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .blue-glow:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation: float 8s infinite alternate;
+        }
+
+        .blue-glow:nth-child(2) {
+            top: 60%;
+            right: 15%;
+            animation: float 6s infinite alternate-reverse;
+        }
+
+        @keyframes float {
+            from { transform: translateY(0); }
+            to { transform: translateY(-30px); }
+        }
+
+        /* 特性区域样式 */
+        .features {
+            padding: 100px 50px;
+            background: #111;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .features-title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .features-title h2 {
+            font-size: 36px;
+            color: #fff;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(0, 168, 255, 0.3);
+        }
+
+        .features-title p {
+            font-size: 16px;
+            color: #999;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 50px auto 0;
+        }
+
+        .feature-card {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 168, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(0, 168, 255, 0.03), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
+        }
+
+        .feature-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 168, 255, 0.3);
+            box-shadow: 0 0 30px rgba(0, 168, 255, 0.1);
+        }
+
+        .feature-card h3 {
+            color: #00a8ff;
+            font-size: 24px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-card h3 i {
+            font-size: 28px;
+        }
+
+        .feature-card p {
+            color: #999;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        /* 添加世界地图背景 */
+        .world-map {
+            position: absolute;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 1200px;
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        .world-map img {
+            width: 100%;
+            height: auto;
+            filter: hue-rotate(180deg); /* 将地图变为绿色 */
+        }
+
+        /* 游戏资讯区域 */
+        .news-section {
+            padding: 50px;
+            background: #111;
+            position: relative;
+        }
+
+        .news-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .news-title {
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .news-list {
+            list-style: none;
+        }
+
+        .news-item {
+            margin-bottom: 20px;
+        }
+
+        .news-item a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #999;
+            text-decoration: none;
+            transition: all 0.3s;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .news-item a:hover {
+            color: #00a8ff;
+            background: rgba(0, 168, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .news-item i {
+            color: #00a8ff;
+            font-size: 16px;
+        }
+
+        /* 页脚样式 */
+        .footer {
+            background: #0a0a0a;
+            padding: 50px;
+            color: #666;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .footer-title {
+            font-size: 20px;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+
+        .footer-column h3 {
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column ul li a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column ul li a:hover {
+            color: #00a8ff;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+        }
+
+        .footer-social a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-social a:hover {
+            color: #00a8ff;
+        }
+
+        .service-time {
+            color: #666;
+            text-align: right;
+        }
+
+        /* 添加友情链接和备案信息样式 */
+        .footer-info {
+            background: #0a0a0a;
+            padding: 20px 50px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-info-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .friend-links {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .friend-links-title {
+            color: #666;
+            font-size: 14px;
+            margin-right: 15px;
+        }
+
+        .friend-links a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            margin-right: 20px;
+            transition: color 0.3s;
+        }
+
+        .friend-links a:hover {
+            color: #00a8ff;
+        }
+
+        .footer-info-text {
+            color: #666;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .footer-info-text p {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .footer-info-text a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s;
+            white-space: nowrap;
+        }
+
+        .footer-info-text a:hover {
+            color: #00a8ff;
+        }
+
+        .trust-icon {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            filter: invert(50%) sepia(100%) saturate(500%) hue-rotate(340deg) brightness(90%) contrast(100%); /* 调整为深红色 */
+        }
+
+        .trust-icons {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .trust-icon {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            filter: invert(73%) sepia(88%) saturate(3184%) hue-rotate(346deg) brightness(101%) contrast(96%); /* 设置为orange颜色 */
+        }
+    </style>
+</head>
+<body>
+    <!-- 蓝色光效 -->
+    <div class="blue-glow"></div>
+    <div class="blue-glow"></div>
+
+    <!-- 游戏背景 -->
+    <div class="game-bg">
+        <img src="game-collage.jpg" alt="游戏背景">
+    </div>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="#" class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <span>奇游</span>
+        </a>
+        <div class="nav-links">
+            <a href="#">客户端下载</a>
+            <a href="#">联机室</a>
+            <a href="#">手游加速器</a>
+            <a href="#">会员</a>
+            <a href="#">支持游戏</a>
+            <span class="main-tag">主机版</span>
+        </div>
+        <a href="#" class="download-btn">免费体验</a>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <h1>电竞级游戏加速</h1>
+        <p>毫秒必争 奇开得胜</p>
+        <a href="#" class="win-download-btn">
+            <i class="fab fa-windows"></i>
+            Win客户端下载
+        </a>
+    </section>
+
+    <!-- 平台支持 -->
+    <section class="platforms">
+        <div class="platform-grid">
+            <div class="platform-item">
+                <i class="fab fa-windows"></i>
+                <span>Windows</span>
+            </div>
+            <div class="platform-item">
+                <i class="fab fa-apple"></i>
+                <span>MacOS</span>
+            </div>
+            <div class="platform-item">
+                <i class="fab fa-apple"></i>
+                <span>iOS</span>
+            </div>
+            <div class="platform-item">
+                <i class="fab fa-android"></i>
+                <span>Android</span>
+            </div>
+            <div class="platform-item">
+                <i class="fab fa-playstation"></i>
+                <span>PlayStation</span>
+            </div>
+            <div class="platform-item">
+                <i class="fab fa-xbox"></i>
+                <span>XBox</span>
+            </div>
+            <div class="platform-item">
+                <i class="fab fa-nintendo-switch"></i>
+                <span>Nintendo Switch</span>
+            </div>
+            <div class="platform-item">
+                <i class="fab fa-steam"></i>
+                <span>Steam Deck</span>
+            </div>
+            <div class="platform-item">
+                <i class="fas fa-vr-cardboard"></i>
+                <span>PICO</span>
+            </div>
+            <div class="platform-item">
+                <i class="fas fa-vr-cardboard"></i>
+                <span>Oculus Quest</span>
+            </div>
+            <div class="platform-item">
+                <i class="fas fa-wifi"></i>
+                <span>Router</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 特性区域 -->
+    <section class="features">
+        <div class="features-title">
+            <h2>为游戏玩家量身定制</h2>
+            <p>奇游是一款适用于全平台的游戏工具，内置玩家所需的软/硬件多种个性化功能，为您提供绝佳的「游戏加速、FPS硬件优化、组队开黑、玩家社区」服务。</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>
+                    <i class="fas fa-network-wired"></i>
+                    电竞级游戏加速网络
+                </h3>
+                <p>覆盖全球的游戏专属网络，10000+节点就近接入，为玩家提供高速稳定，超低延迟的加速服务。</p>
+            </div>
+            <div class="feature-card">
+                <h3>
+                    <i class="fas fa-shield-alt"></i>
+                    网络传输协议优化
+                </h3>
+                <p>通过传输层的关键包、冗余包传输优化，大幅提高稳定性，有效降低丢包率，提升游戏体验。</p>
+            </div>
+            <div class="feature-card">
+                <h3>
+                    <i class="fas fa-tachometer-alt"></i>
+                    多线全区服加速
+                </h3>
+                <p>采用路由调度算法、多线并行连接、最短传输路径等加速技术，实现极致延迟的全链路加速保障。</p>
+            </div>
+        </div>
+        <!-- 世界地图背景 -->
+        <div class="world-map">
+            <img src="world-map.png" alt="世界地图">
+        </div>
+    </section>
+
+    <!-- 游戏资讯 -->
+    <section class="news-section">
+        <div class="news-container">
+            <div class="news-column">
+                <h2 class="news-title">热门资讯</h2>
+                <ul class="news-list">
+                    <li class="news-item">
+                        <a href="#">
+                            <i class="fas fa-chevron-right"></i>
+                            CS2竞包闪退怎么办 全新三种解决方案
+                        </a>
+                    </li>
+                    <li class="news-item">
+                        <a href="#">
+                            <i class="fas fa-chevron-right"></i>
+                            解限机闪退该怎么申请 Discord解决方案
+                        </a>
+                    </li>
+                    <li class="news-item">
+                        <a href="#">
+                            <i class="fas fa-chevron-right"></i>
+                            流放之路2未法重置新的执行档案
+                        </a>
+                    </li>
+                    <li class="news-item">
+                        <a href="#">
+                            <i class="fas fa-chevron-right"></i>
+                            gta5无法联机怎么解决 有效解决方案
+                        </a>
+                    </li>
+                    <li class="news-item">
+                        <a href="#">
+                            <i class="fas fa-chevron-right"></i>
+                            Epic黑屏进不去/打不开怎么办 Epic解决方案
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="news-column">
+                <h2 class="news-title">最新动态</h2>
+                <ul class="news-list">
+                    <li class="news-item">
+                        <a href="#">
+                            <i class="fas fa-chevron-right"></i>
+                            光明觉醒上线时间/配置要求/中...
+                        </a>
+                    </li>
+                    <li class="news-item">
+                        <a href="#">
+                            <i class="fas fa-chevron-right"></i>
+                            解限机国际服内测资格申请：Disc...
+                        </a>
+                    </li>
+                    <li class="news-item">
+                        <a href="#">
+                            <i class="fas fa-chevron-right"></i>
+                            Warden's Will上线时间/配置要求/...
+                        </a>
+                    </li>
+                    <li class="news-item">
+                        <a href="#">
+                            <i class="fas fa-chevron-right"></i>
+                            逃离塔科夫error on get错误解决...
+                        </a>
+                    </li>
+                    <li class="news-item">
+                        <a href="#">
+                            <i class="fas fa-chevron-right"></i>
+                            第十六声在哪里下载 一分钟教你...
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-title">专为游戏玩家打造</div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h3>Win客户端</h3>
+                    <ul>
+                        <li><a href="#"><i class="fab fa-windows"></i> Windows</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Mac客户端</h3>
+                    <ul>
+                        <li><a href="#"><i class="fab fa-apple"></i> MacOS</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>手机端</h3>
+                    <ul>
+                        <li><a href="#"><i class="fab fa-apple"></i> iOS</a></li>
+                        <li><a href="#"><i class="fab fa-android"></i> Android</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>主机加速</h3>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-gamepad"></i> 主机加速</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-weixin"></i></a>
+                    <a href="#"><i class="fab fa-weibo"></i></a>
+                    <a href="#"><i class="fas fa-video"></i></a>
+                </div>
+                <div class="service-time">
+                    <p>客服时间：00-22:30</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 友情链接和备案信息 -->
+    <div class="footer-info">
+        <div class="footer-info-content">
+            <div class="friend-links">
+                <span class="friend-links-title">友情链接:</span>
+                <a href="#">宏碁游戏</a>
+                <a href="#">青禾游戏</a>
+                <a href="#">Epic游戏账号</a>
+                <a href="#">Tap.fun</a>
+                <a href="#">好游传媒</a>
+                <a href="#">夜神模拟器</a>
+            </div>
+            <div class="footer-info-text">
+                <p>©2014-2025 Qiyou.cn浙江奇游科技有限公司</p>
+                <p>
+                    <a href="#">川网文[2018]10426-417号</a>
+                    <a href="#">浙ICP备14024250号-1</a>
+                    <a href="#">公安备案51010602001066号</a>
+                </p>
+                <p>
+                    <a href="#">增值电信业务经营许可证：浙B1-20183888</a>
+                    <a href="#">网络文化经营许可证：浙网文[2018]10426-417号</a>
+                </p>
+                <p>
+                    <a href="#">开发者</a>
+                    <a href="#">网络协议</a>
+                    <a href="#">隐私与用户协议</a>
+                    <a href="#">浙江奇游科技有限公司</a>
+                    <a href="#">举报邮箱：2025/11/17</a>
+                </p>
+                <div class="trust-icons">
+                    <img src="trust-icon.jpg" alt="可信网站" class="trust-icon">
+                    <img src="trust-icon.jpg" alt="可信网站" class="trust-icon">
+                    <img src="trust-icon.jpg" alt="可信网站" class="trust-icon">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
